@@ -3,7 +3,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
-
+/**
+*@author Tommaso Bistocchi
+*@version 1.0
+*@see Cavallo
+*/
 public class Main {
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
@@ -74,3 +78,4 @@ public class Main {
         input.close();
     }
 }
+
