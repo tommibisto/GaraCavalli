@@ -16,16 +16,26 @@ public class Cavallo {
     public String getNome() {
         return nome;
     }
+    /**
+    *return restituisce il nome
+    */
 
     public int getDistanzaPercorsa() {
         return distanzaPercorsa;
     }
+    /**
+    *return restituisce la distanza percorsa dal cavallo
+    */
 
     public boolean isAzzoppato() {
         return azzoppato;
     }
+    /**
+    *return restituisce se il cavallo si è azzoppato
+    */
 
     public void setAzzoppato(boolean azzoppato) {
         this.azzoppato = azzoppato;
     }
 }
+
