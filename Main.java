@@ -1,23 +1,39 @@
-import java.io.FileWriter;
-import java.io.IOException;
+import javax.swing.JFileChooser;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
+
 /**
-*@author Tommaso Bistocchi
-*@version 1.0
-*@see Cavallo
-*/
+ * @author Tommaso Bistocchi
+ * @version 1.0
+ * @see Cavallo
+ */
 public class Main {
+
     public static void main(String[] args) {
+
+        // === SCELTA DEL FILE DI OUTPUT (semplice) ===
+        JFileChooser chooser = new JFileChooser();
+        chooser.setDialogTitle("Scegli il file in cui salvare l'output");
+
+        File outputFile;
+        int result = chooser.showSaveDialog(null);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            outputFile = chooser.getSelectedFile();
+        } else {
+            outputFile = new File("risultato_gara.txt");  // fallback semplice
+        }
+
         Scanner input = new Scanner(System.in);
         Random random = new Random();
 
         System.out.print("Inserisci la lunghezza del percorso (in metri): ");
         int lunghezzaPercorso = input.nextInt();
-        input.nextLine(); // pulisce il buffer
+        input.nextLine();
 
-        // ArrayList di cavalli
         ArrayList<Cavallo> cavalli = new ArrayList<>();
         cavalli.add(new Cavallo("moscio "));
         cavalli.add(new Cavallo("anto"));
@@ -26,56 +42,11 @@ public class Main {
         cavalli.add(new Cavallo("bisto"));
 
         boolean garaFinita = false;
-        int passo = 5; // metri per ciclo
+        int passo = 5;
 
-        try (FileWriter writer = new FileWriter("risultato_gara.txt")) {
-            writer.write("--- INIZIO GARA ---\n\n");
+        // === STREAM INCAPSULANTI (FileOutputStream + BufferedOutputStream) ===
+        try (FileOutputStream fos = new FileOutputStream(outputFile);
+             BufferedOutputStream bos = new BufferedOutputStream(fos)) {
+
+            bos.write("--- INIZIO GARA ---\n\n".getBytes());
             System.out.println("\n--- INIZIO GARA ---");
-
-            while (!garaFinita) {
-                for (Cavallo c : cavalli) {
-                    if (c.isAzzoppato()) continue; // salta se è azzoppato
-
-                    // Possibilità 10% che si azzoppi
-                    if (random.nextInt(100) < 10) {
-                        c.setAzzoppato(true);
-                        String msg = "❌ " + c.getNome() + " si è azzoppato e non può continuare!\n";
-                        System.out.print(msg);
-                        writer.write(msg);
-                        continue;
-                    }
-
-                    c.corri(passo);
-                    String msg = c.getNome() + " ha percorso " + c.getDistanzaPercorsa() + " metri.\n";
-                    System.out.print(msg);
-                    writer.write(msg);
-
-                    if (c.getDistanzaPercorsa() >= lunghezzaPercorso) {
-                        String vincitore = "\n🏆 Il vincitore è " + c.getNome() + "!\n";
-                        System.out.println(vincitore);
-                        writer.write(vincitore);
-                        garaFinita = true;
-                        break;
-                    }
-                }
-
-                writer.write("---------------------------\n");
-                System.out.println("---------------------------");
-
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    break;
-                }
-            }
-
-            writer.write("\n--- GARA TERMINATA ---\n");
-            System.out.println("\n--- GARA TERMINATA ---");
-        } catch (IOException e) {
-            System.out.println("Errore nella scrittura del file: " + e.getMessage());
-        }
-
-        input.close();
-    }
-}
-
